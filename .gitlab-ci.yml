@@ -1,0 +1,37 @@
+---
+variables:
+
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_DRIVER: overlay2
+  AWS_REGION: eu-west-1
+
+stages:
+  - build
+  - deploy
+
+build:
+  services:
+    - docker:dind
+  image: registry.gitlab.com/knmi/shs/knmi-build-image:latest
+  before_script:
+    - apk add --update python py-pip python-dev bash make git
+  stage: build
+  script:
+    - make
+    - find . -name "*.zip"
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+deploy:
+  image: registry.gitlab.com/knmi/shs/knmi-build-image:latest
+  stage: deploy
+  script:
+    - cd target
+    - export ARCHIVE=$(find . -name "*.zip" | awk -F\/ '{ print $2 }')
+    - echo $ARCHIVE
+    - aws s3 cp $ARCHIVE s3://knmi-landing-zone-assets-eu-west-1/lambda/knmi-$ARCHIVE
+  only:
+    - tags
+  
