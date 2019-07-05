@@ -9,8 +9,6 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-log = logging.getLogger()
-log.setLevel(os.environ.get("LOG_LEVEL", "DEBUG"))
 schema = {
     "type": "object",
     "required": ["GatewayARN", "Role", "LocationARN", "ClientList"],
@@ -30,9 +28,6 @@ schema = {
                 "required": ["Key", "Value"],
                 "properties": {
                     "Key": {
-                        "type": "string"
-                    },
-                    "Value": {
                         "type": "string"
                     }
                 }
@@ -82,8 +77,7 @@ class StorageGatewayNfsFileShareProvider(ResourceProvider):
 
     def delete(self):
         try:
-            log.info("Deleting SGW %s",
-                     self.get("GatewayARN"))
+            log.info("Deleting SGW NFS file share %s", self.physical_resource_id)
 
             response = self.storagegw.delete_file_share(
                 FileShareARN=self.physical_resource_id,

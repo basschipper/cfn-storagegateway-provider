@@ -7,8 +7,6 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-log = logging.getLogger()
-log.setLevel(os.environ.get("LOG_LEVEL", "DEBUG"))
 schema = {
     "type": "object",
     "required": ["ActivationKey", "GatewayName", "GatewayTimezone", "GatewayRegion"],
@@ -30,9 +28,6 @@ schema = {
                 "required": ["Key", "Value"],
                 "properties": {
                     "Key": {
-                        "type": "string"
-                    },
-                    "Value": {
                         "type": "string"
                     }
                 }
