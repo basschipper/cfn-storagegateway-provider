@@ -8,6 +8,9 @@ from cfn_resource_provider import ResourceProvider
 import boto3
 from botocore.exceptions import ClientError
 
+log = logging.getLogger()
+log.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
+
 
 schema = {
     "type": "object",
