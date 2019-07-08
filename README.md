@@ -19,6 +19,13 @@ Resources:
         - Key: Department
           Value: Finance
       ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:knmi-cfn-storagegateway-provider'
+  StorageGatewayCache:
+    Type: Custom::StorageGatewayCache
+    Properties:
+      GatewayARN: !Ref StorageGateway
+      DiskNodes:
+        - /dev/sdf
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:knmi-cfn-storagegateway-provider'
   StorageGatewayFileShareRole:
     Type: AWS::IAM::Role
     Properties:
