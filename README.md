@@ -1,5 +1,14 @@
 # AWS Storage Gateway provider
 
+The missing provider for managing a Storage Gateway from CloudFormation.
+This custom resource currently consists of 3 providers:
+
+* Custom::StorageGateway - [schema](src/cfn_storage_gateway_provider.py)
+* Custom::StorageGatewayCache - [schema](src/cfn_cache_provider.py) 
+* Custom::StorageGatewayNfsFileShare - [schema](src/cfn_file_share_provider.py)
+
+For more information on the used parameters please refer to the [Boto 3 documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/storagegateway.html).
+
 ## Example
 
 ```yaml
@@ -65,11 +74,22 @@ Resources:
   StorageGatewayNfsFileShare:
     Type: Custom::StorageGatewayNfsFileShare
     Properties:
+      NFSFileShareDefaults:
+        FileMode: "0666"
+        DirectoryMode: "0777"
+        GroupId: 65534
+        OwnerId: 65534
       GatewayARN: !GetAtt StorageGateway.Arn
       Role: !GetAtt StorageGatewayFileShareRole.Arn
       LocationARN: arn:aws:s3:::target-bucket
+      DefaultStorageClass: S3_STANDARD
+      ObjectACL: private
       ClientList:
         - 0.0.0.0/0
+      Squash: RootSquash
+      ReadOnly: False
+      GuessMIMETypeEnabled: True
+      RequesterPays: False
       Tags:
         - Key: Department
           Value: Finance
