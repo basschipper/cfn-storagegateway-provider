@@ -32,6 +32,9 @@ schema = {
                 "properties": {
                     "Key": {
                         "type": "string"
+                    },
+                    "Value": {
+                        "type": "string"
                     }
                 }
             }
