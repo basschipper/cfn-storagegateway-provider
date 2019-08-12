@@ -75,7 +75,29 @@ class StorageGatewayProvider(ResourceProvider):
             self.fail(str(e))
 
     def update(self):
-        pass
+        try:
+            log.info("Updating SGW %s", self.get("GatewayName"))
+
+            response = self.storagegw.list_tags_for_resource(
+                ResourceARN=self.physical_resource_id
+            )
+            response = self.storagegw.remove_tags_from_resource(
+                ResourceARN=self.physical_resource_id,
+                TagKeys=list(map(lambda x : x['Key'], response["Tags"]))
+            )
+            response = self.storagegw.add_tags_to_resource(
+                ResourceARN=self.physical_resource_id,
+                Tags=self.get("Tags")
+            )
+
+            log.debug("%s", response)
+
+            self.set_attribute('Arn', response["ResourceARN"])
+            self.physical_resource_id = response["ResourceARN"]
+        except ClientError as e:
+            log.error("ClientError %s", str(e))
+            self.physical_resource_id = 'could-not-update'
+            self.fail(str(e))
 
     def delete(self):
         try:
